@@ -12,7 +12,7 @@ const models = path.join(__dirname, "models") // path to a models' folder
 
 fs.readdirSync(models)
     .filter((file) => {
-        return (file.startsWith("."))  && (file.endsWith(".js"))
+        return (!file.startsWith("."))  && (file.endsWith(".js"))
     })
     .forEach((file) => {
         var model = require(path.join(models, file))(sequelize, DataTypes)
