@@ -114,8 +114,7 @@ router.put("/:id", async (req, res) => {
             {
                 where: {
                     id: id
-                },
-                returning: true
+                }
             }
         )
     } catch (err) {
