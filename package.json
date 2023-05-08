@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon index.js",
     "prodStart": "node index.js",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint -c tests/.eslintrc.yml ."
   },
   "author": "",
   "license": "ISC",
