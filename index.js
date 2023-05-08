@@ -10,6 +10,8 @@ sequelize.authenticate()
             app.listen(5000, () => {
                 console.log("Menu items service listening on http://localhost:5000")
             })
+        }).catch((err) => {
+            console.log("Unable to sync the models with the database", err)
         })
     }).catch((err) => {
         console.log("Unable to connect to menu items database", err)
