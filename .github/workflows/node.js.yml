@@ -1,0 +1,45 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Menu API CI/CD
+run-name: Build, lint, test and deploy coverage
+
+env:
+  DB_URI : "sqlite::memory:"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  menu:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 19.x]
+        
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Install depenencies
+      run: npm ci
+    
+    - name: Lint
+      run: npm run lint
+    
+#    - name: Run tests and collect coverage
+#      run: npm run test
+    
+#    - name: SonarCloud Scan
+#      uses: sonarsource/sonarcloud-github-action@master
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    
