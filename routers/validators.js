@@ -88,7 +88,7 @@ const assignTagToItemValidator = (req, res, next) => {
         menuItemId: "required|integer"
     }
 
-    const tagId = req.body.tagId
+    const tagId = req.body.tagId || req.params.tagId
     const menuItemId = req.params.menuItemId
 
     const validation = new Validator(
