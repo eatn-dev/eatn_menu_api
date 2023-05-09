@@ -1,18 +1,9 @@
-const Validator = require("validatorjs")
 const router = require("express").Router()
 const db = require("../sequelizeConnection")
 const { createTagValidator, getTagByIdValidator, updateTagValidator, deleteTagValidator } = require("./validators")
 
-router.post("/", async (req, res) => {
+router.post("/", createTagValidator, async (req, res) => {
     const { name, bgColor, fgColor, icon } = req.body
-
-    const validation = new Validator(
-        { name, bgColor, fgColor, icon },
-        createTagValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let tag
     try {
@@ -51,16 +42,8 @@ router.get("/", async (req, res) => {
     }
 })
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", getTagByIdValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        getTagByIdValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let tag
     try { 
@@ -86,17 +69,9 @@ router.get("/:id", async (req, res) => {
     return res.json({ data: tag })
 })
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", updateTagValidator, async (req, res) => {
     const id = req.params.id
     const { name, bgColor, fgColor, icon } = req.body
-
-    const validation = new Validator(
-        { id, name, bgColor, fgColor, icon },
-        updateTagValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let returning
     try {
@@ -126,16 +101,8 @@ router.put("/:id", async (req, res) => {
     return res.json({ data: "Menu item successfully updated." })
 })
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", deleteTagValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        deleteTagValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let returning
     try {

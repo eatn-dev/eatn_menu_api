@@ -1,18 +1,9 @@
-const Validator = require("validatorjs")
 const router = require("express").Router()
 const db = require("../sequelizeConnection")
 const { createCategoryValidator, getCategoryByIdValidator, updateCategoryValidator, deleteCategoryValidator } = require("./validators")
 
-router.post("/", async (req, res) => {
+router.post("/", createCategoryValidator, async (req, res) => {
     const { name } = req.body
-
-    const validation = new Validator(
-        { name },
-        createCategoryValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
     
     let category
     try {
@@ -52,16 +43,8 @@ router.get("/", async (req, res) => {
     return res.json({ data: categories})
 })
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", getCategoryByIdValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        getCategoryByIdValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let category
     try{
@@ -90,20 +73,10 @@ router.get("/:id", async (req, res) => {
     return res.json({ data: category })
 })
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", updateCategoryValidator, async (req, res) => {
     const id = req.params.id
     const { name } = req.body
 
-    const validation = new Validator(
-        { id, name },
-        updateCategoryValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
-
-    // this is postgres feature only
-    // it returns how many rows have been updated
     let returning
     try {
         returning = await db.Category.update(
@@ -131,16 +104,8 @@ router.put("/:id", async (req, res) => {
     return res.json({ data: "Category successfully updated." })
 })
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", deleteCategoryValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        deleteCategoryValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let returning
     try {

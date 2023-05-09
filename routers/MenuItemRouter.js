@@ -1,20 +1,11 @@
-const Validator = require("validatorjs")
 const router = require("express").Router()
 const db = require("../sequelizeConnection")
 const { createItemValidator, getItemByIdValidator, updateItemValidator, deleteItemValidator, assignTagToItemValidator } = require("./validators")
 
 
 // create new menu item
-router.post("/", async (req, res) => {
+router.post("/", createItemValidator, async (req, res) => {
     const { name, price, quantity, description, subcategoryId } = req.body
-
-    const validation = new Validator(
-        { name, price, quantity, description, subcategoryId },
-        createItemValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     // TODO: ask leon if i should have 1 try-catch per query or 1 try-catch per route
 
@@ -94,16 +85,8 @@ router.get("/", async (req, res) => {
 })
 
 // get menu item by id
-router.get("/:id", async (req, res) => {
+router.get("/:id", getItemByIdValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        getItemByIdValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let item
     try {
@@ -146,17 +129,9 @@ router.get("/:id", async (req, res) => {
 })
 
 // update menu item
-router.put("/:id", async (req, res) => {
+router.put("/:id", updateItemValidator, async (req, res) => {
     const id = req.params.id
     const { name, price, quantity, description, subcategoryId } = req.body
-
-    const validation = new Validator(
-        { id, name, price, quantity, description, subcategoryId },
-        updateItemValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
     
     let subcategory
     try{
@@ -205,16 +180,8 @@ router.put("/:id", async (req, res) => {
 })
 
 // delete menu item
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", deleteItemValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        deleteItemValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let returning
     try {
@@ -235,20 +202,9 @@ router.delete("/:id", async (req, res) => {
 })
 
 // assign tag to menu item
-router.post("/:menuItemId/tags", async (req, res) => {
+router.post("/:menuItemId/tags", assignTagToItemValidator, async (req, res) => {
     const tagId = req.body.tagId
     const menuItemId = req.params.menuItemId
-
-    const validation = new Validator(
-        {
-            tagId,
-            menuItemId
-        },
-        assignTagToItemValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     // TODO: ask leon if this try-catch coverage is okay
     try {
@@ -286,20 +242,9 @@ router.post("/:menuItemId/tags", async (req, res) => {
     return res.json({ data: `Tag with id ${tagId} successfully assigned to menu item id ${menuItemId}.` })
 })
 
-router.delete("/:menuItemId/tags/:tagId", async (req, res) => {
+router.delete("/:menuItemId/tags/:tagId", assignTagToItemValidator, async (req, res) => {
     const tagId = req.params.tagId
     const menuItemId = req.params.menuItemId
-
-    const validation = new Validator(
-        {
-            tagId,
-            menuItemId
-        },
-        assignTagToItemValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     try {
         const tag = await db.Tag.findOne({

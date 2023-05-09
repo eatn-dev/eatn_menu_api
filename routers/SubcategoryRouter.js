@@ -1,18 +1,9 @@
-const Validator = require("validatorjs")
 const router = require("express").Router()
 const db = require("../sequelizeConnection")
 const { createSubcategoryValidator, getSubcategoryByIdValidator, updateSubcategoryValidator, deleteSubcategoryValidator } = require("./validators")
 
-router.post("/", async (req, res) => {
+router.post("/", createSubcategoryValidator, async (req, res) => {
     const { name, categoryId } = req.body
-
-    const validation = new Validator(
-        { name, categoryId },
-        createSubcategoryValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
         
     // check if parent category exists
     let category
@@ -76,16 +67,8 @@ router.get("/", async (req, res) => {
     return res.json({ data: subcategories})
 })
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", getSubcategoryByIdValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        getSubcategoryByIdValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let subcategory
     try{
@@ -117,17 +100,9 @@ router.get("/:id", async (req, res) => {
     return res.json({ data: subcategory })
 })
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", updateSubcategoryValidator, async (req, res) => {
     const id = req.params.id
     const { name, categoryId } = req.body
-
-    const validation = new Validator(
-        { id, name, categoryId },
-        updateSubcategoryValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     // check if parent category exists
     let category
@@ -170,16 +145,8 @@ router.put("/:id", async (req, res) => {
     return res.json({ data: "Subcategory successfully updated." })
 })
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", deleteSubcategoryValidator, async (req, res) => {
     const id = req.params.id
-
-    const validation = new Validator(
-        { id },
-        deleteSubcategoryValidator
-    )
-
-    if (validation.fails())
-        return res.status(400).send({ data: validation.errors })
 
     let returning
     try {
