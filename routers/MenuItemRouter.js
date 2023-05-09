@@ -19,7 +19,7 @@ router.post("/", createItemValidator, async (req, res) => {
             })
     
             if (!subcategory)
-                return res.status(404).json({ data: "Subcategory with provided id does not exist." })
+                return res.sendStatus(404)
         }
     } catch (err) {
         console.log(err)
@@ -37,14 +37,29 @@ router.post("/", createItemValidator, async (req, res) => {
         })
     } catch (err) {
         if (err.name === "SequelizeUniqueConstraintError")
-            return res.status(409).json({ data: "That name is already in use." })
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
 
         console.log(err)
         return res.sendStatus(500)
     }
 
 
-    return res.json({ data: `Item successfully created with id ${item.id}` })
+    return res.json(
+        {
+            data: {
+                message: "Menu item successfully created.",
+                returning: {
+                    menuItemId: item.id
+                }
+            }
+        }
+    )
 
 })
 
@@ -143,7 +158,7 @@ router.put("/:id", updateItemValidator, async (req, res) => {
             })
     
             if (!subcategory)
-                return res.status(404).json({ data: "Subcategory with provided id does not exist." })
+                return res.sendStatus(404)
         }
     } catch (err) {
         console.log(err)
@@ -167,7 +182,13 @@ router.put("/:id", updateItemValidator, async (req, res) => {
             })
     } catch (err) {
         if (err.name === "SequelizeUniqueConstraintError")
-            return res.status(409).json({ data: "That name is already in use." })
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
             
         console.log(err)
         return res.sendStatus(500)
@@ -176,7 +197,13 @@ router.put("/:id", updateItemValidator, async (req, res) => {
     if (returning[0] !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Menu item successfully updated." })
+    return res.json(
+        {
+            data: { 
+                message: "Menu item successfully updated."
+            }
+        }
+    )
 })
 
 // delete menu item
@@ -198,7 +225,13 @@ router.delete("/:id", deleteItemValidator, async (req, res) => {
     if (returning !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Menu item successfully deleted." })
+    return res.json(
+        { 
+            data: {
+                message: "Menu item successfully deleted." 
+            }
+        }
+    )
 })
 
 // assign tag to menu item
@@ -230,7 +263,13 @@ router.post("/:menuItemId/tags", assignTagToItemValidator, async (req, res) => {
         const tagAlreadyAssigned = await menuItem.hasTag(tag)
     
         if (tagAlreadyAssigned){
-            return res.status(409).json({ data: `Tag id ${tagId} is already assigned to this menu item.`})
+            return res.status(409).json(
+                {
+                    data: {
+                        message: `\`${tag.name}\` tag is already assigned to \`${menuItem.name}\`.`
+                    }
+                }
+            )
         }
         
         await menuItem.addTag(tag)
@@ -239,7 +278,13 @@ router.post("/:menuItemId/tags", assignTagToItemValidator, async (req, res) => {
         return res.sendStatus(500)
     }
 
-    return res.json({ data: `Tag with id ${tagId} successfully assigned to menu item id ${menuItemId}.` })
+    return res.json(
+        { 
+            data: {
+                message: "Tag assigned successfully." 
+            }
+        }
+    )
 })
 
 router.delete("/:menuItemId/tags/:tagId", assignTagToItemValidator, async (req, res) => {
@@ -269,7 +314,7 @@ router.delete("/:menuItemId/tags/:tagId", assignTagToItemValidator, async (req, 
         const tagAlreadyAssigned = await menuItem.hasTag(tag)
     
         if (!tagAlreadyAssigned){
-            return res.status(404).json({ data: `Tag with id ${tagId} is not assigned to this menu item therefore you cannot unassign it.`})
+            return res.sendStatus(404)
         }
         
         await menuItem.removeTag(tag)
@@ -278,7 +323,13 @@ router.delete("/:menuItemId/tags/:tagId", assignTagToItemValidator, async (req, 
         return res.sendStatus(500)
     }
 
-    return res.json({ data: `Tag with id ${tagId} successfully unassigned from menu item id ${menuItemId}.` })
+    return res.json(
+        { 
+            data: {
+                message: "Tag removed successfully." 
+            }
+        }
+    )
 })
 
 module.exports = router

@@ -15,7 +15,7 @@ router.post("/", createSubcategoryValidator, async (req, res) => {
         })
 
         if (!category)
-            return res.status(404).json({ data: "Category with provided id does not exist." })
+            return res.sendStatus(404)
     } catch (err) {
         console.log(err)
         return res.sendStatus(500)
@@ -29,13 +29,28 @@ router.post("/", createSubcategoryValidator, async (req, res) => {
         })
     } catch (err) {
         if (err.name === "SequelizeUniqueConstraintError")
-            return res.status(409).json({ data: "That name is already in use." })
-            
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
+
         console.log(err)
         return res.sendStatus(500)
     }
 
-    return res.json({data: `Subcategory succesfuly created with id ${subcategory.id}`})
+    return res.json(
+        {
+            data: {
+                message: "Subcategory successfully created.",
+                returning: {
+                    subcategoryId: subcategory.id
+                }
+            }
+        }
+    )
 })
 
 router.get("/", async (req, res) => {
@@ -114,7 +129,7 @@ router.put("/:id", updateSubcategoryValidator, async (req, res) => {
         })
     
         if (!category)
-            return res.status(404).json({ data: "Category with provided id does not exist." })
+            return res.sendStatus(404)
     } catch (err) {
         console.log(err)
         return res.sendStatus(500)
@@ -135,6 +150,15 @@ router.put("/:id", updateSubcategoryValidator, async (req, res) => {
             }
         )
     } catch (err) {
+        if (err.name === "SequelizeUniqueConstraintError")
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
+            
         console.log(err)
         return res.sendStatus(500)
     }
@@ -142,7 +166,13 @@ router.put("/:id", updateSubcategoryValidator, async (req, res) => {
     if (returning[0] !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Subcategory successfully updated." })
+    return res.json(
+        {
+            data: { 
+                message: "Subcategory successfully updated."
+            }
+        }
+    )
 })
 
 router.delete("/:id", deleteSubcategoryValidator, async (req, res) => {
@@ -163,7 +193,13 @@ router.delete("/:id", deleteSubcategoryValidator, async (req, res) => {
     if (returning !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Subcategory successfully deleted." })
+    return res.json(
+        { 
+            data: {
+                message: "Category successfully deleted." 
+            }
+        }
+    )
 })
 
 module.exports = router

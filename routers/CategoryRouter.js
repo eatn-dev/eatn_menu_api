@@ -12,13 +12,28 @@ router.post("/", createCategoryValidator, async (req, res) => {
         })
     } catch (err) {
         if (err.name === "SequelizeUniqueConstraintError")
-            return res.status(409).json({ data: "That name is already in use." })
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
 
         console.log(err)
         return res.sendStatus(500)
     }
 
-    return res.json({data: `Category succesfuly created with id ${category.id}`})
+    return res.json(
+        {
+            data: {
+                message: "Category successfully created.",
+                returning: {
+                    categoryId: category.id
+                }
+            }
+        }
+    )
 })
 
 router.get("/", async (req, res) => {
@@ -92,7 +107,13 @@ router.put("/:id", updateCategoryValidator, async (req, res) => {
         )
     } catch (err) {
         if (err.name === "SequelizeUniqueConstraintError")
-            return res.status(409).json({ data: "That name is already in use." })
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
             
         console.log(err)
         return res.sendStatus(500)
@@ -101,7 +122,13 @@ router.put("/:id", updateCategoryValidator, async (req, res) => {
     if (returning[0] !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Category successfully updated." })
+    return res.json(
+        {
+            data: { 
+                message: "Category successfully updated."
+            }
+        }
+    )
 })
 
 router.delete("/:id", deleteCategoryValidator, async (req, res) => {
@@ -122,7 +149,13 @@ router.delete("/:id", deleteCategoryValidator, async (req, res) => {
     if (returning !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Category successfully deleted." })
+    return res.json(
+        { 
+            data: {
+                message: "Category successfully deleted." 
+            }
+        }
+    )
 })
 
 module.exports = router

@@ -15,13 +15,28 @@ router.post("/", createTagValidator, async (req, res) => {
         })
     } catch (err) {
         if (err.name === "SequelizeUniqueConstraintError")
-            return res.status(409).json({ data: "That name is already in use." })
-
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
+        
         console.log(err)
         return res.sendStatus(500)
     }
 
-    return res.json({ data: `Tag successfully created with id ${tag.id}` })
+    return res.json(
+        {
+            data: {
+                message: "Tag successfully created.",
+                returning: {
+                    tagId: tag.id
+                }
+            }
+        }
+    )
 })
 
 router.get("/", async (req, res) => {
@@ -89,7 +104,13 @@ router.put("/:id", updateTagValidator, async (req, res) => {
             })
     } catch (err) {
         if (err.name === "SequelizeUniqueConstraintError")
-            return res.status(409).json({ data: "That name is already in use." })
+            return res.status(409).json(
+                {
+                    data: {
+                        message: "That name is already taken."
+                    }
+                }
+            )
             
         console.log(err)
         return res.sendStatus(500)
@@ -98,7 +119,13 @@ router.put("/:id", updateTagValidator, async (req, res) => {
     if (returning[0] !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Menu item successfully updated." })
+    return res.json(
+        {
+            data: { 
+                message: "Tag successfully updated."
+            }
+        }
+    )
 })
 
 router.delete("/:id", deleteTagValidator, async (req, res) => {
@@ -119,7 +146,13 @@ router.delete("/:id", deleteTagValidator, async (req, res) => {
     if (returning !== 1)
         return res.sendStatus(404)
 
-    return res.json({ data: "Tag successfully deleted." })
+    return res.json(
+        { 
+            data: {
+                message: "Tag successfully deleted." 
+            }
+        }
+    )
 })
 
 module.exports = router
