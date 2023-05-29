@@ -57,9 +57,6 @@ router.get("/", async (req, res) => {
     let subcategories
     try {
         subcategories = await db.Subcategory.findAll({
-            attributes: {
-                exclude: ["categoryId"]
-            },
             include: [
                 {
                     model: db.MenuItem,
@@ -88,13 +85,14 @@ router.get("/:id", getSubcategoryByIdValidator, async (req, res) => {
     let subcategory
     try{
         subcategory = await db.Subcategory.findOne({
-            attributes: {
-                exclude: ["categoryId"]
-            },
             where: {
                 id: id
             },
             include: [
+                {
+                    model: db.Category,
+                    as: "category"
+                },
                 {
                     model: db.MenuItem,
                     as: "menu_items",

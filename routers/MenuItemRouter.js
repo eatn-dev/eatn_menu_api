@@ -7,8 +7,6 @@ const { createItemValidator, getItemByIdValidator, updateItemValidator, deleteIt
 router.post("/", createItemValidator, async (req, res) => {
     const { name, price, quantity, description, subcategoryId } = req.body
 
-    // TODO: ask leon if i should have 1 try-catch per query or 1 try-catch per route
-
     let subcategory
     try{
         if (subcategoryId){
@@ -239,7 +237,6 @@ router.post("/:menuItemId/tags", assignTagToItemValidator, async (req, res) => {
     const tagId = req.body.tagId
     const menuItemId = req.params.menuItemId
 
-    // TODO: ask leon if this try-catch coverage is okay
     try {
         const tag = await db.Tag.findOne({
             where: {
