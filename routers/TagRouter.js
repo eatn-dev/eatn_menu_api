@@ -42,12 +42,12 @@ router.post("/", createTagValidator, async (req, res) => {
 router.get("/", async (req, res) => {
     try{
         const tags = await db.Tag.findAll({
-            // include: [
-            //     {
-            //         model: db.MenuItem,
-            //         as: "menu_items"
-            //     }
-            // ]
+            include: [
+                {
+                    model: db.MenuItem,
+                    as: "menu_items"
+                }
+            ]
         })
 
         return res.json({ data: tags})
@@ -66,12 +66,12 @@ router.get("/:id", getTagByIdValidator, async (req, res) => {
             where: {
                 id: id
             },
-            // include: [
-            //     {
-            //         model: db.MenuItem,
-            //         as: "menu_items"
-            //     }
-            // ]
+            include: [
+                {
+                    model: db.MenuItem,
+                    as: "menu_items"
+                }
+            ]
         })
     } catch (err) {
         console.log(err)
